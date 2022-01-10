@@ -13,11 +13,12 @@ def scrape_all():
     news_title, news_paragraph = mars_news(browser)
 
     #Run all scraping funcitons and store results in a dictionary 
-    data = {"news_title": news_title,
-            "news_paragraph": news_paragraph,
-            "featured_image": featured_image(browser),
-            "facts": mars_facts(),
-            "last_modified": dt.datetime.now()
+    data = {
+        "news_title": news_title,
+        "news_paragraph": news_paragraph,
+        "featured_image": featured_image(browser),
+        "facts": mars_facts(),
+        "last_modified": dt.datetime.now()
     }
     # Stop webdriver and return data
     browser.quit()
@@ -26,7 +27,7 @@ def scrape_all():
 def mars_news(browser):
 
     # Visit the mars nasa news site
-    url = 'https://redplanetscience.com'
+    url = 'https://data-class-mars.s3.amazonaws.com/Mars/index.html'
     browser.visit(url)
     # Optional delay for loading the page
     browser.is_element_present_by_css('div.list_text', wait_time=1)
@@ -54,7 +55,7 @@ def mars_news(browser):
 def featured_image(browser):
 
     # Visit URL
-    url = 'https://spaceimages-mars.com'
+    url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
     browser.visit(url)
 
     # Find and click the full image button
@@ -74,7 +75,7 @@ def featured_image(browser):
         return None
 
     # Use the base URL to create an absolute URL
-    img_url = f'https://spaceimages-mars.com/{img_url_rel}'
+    img_url = f'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/{img_url_rel}'
 
     return img_url
 
@@ -84,11 +85,12 @@ def mars_facts():
 
     try:
         # use 'read_html' to scrape the facts table into the dataframe
-        df = pd.read_html('https://galaxyfacts-mars.com')[0]
+        df = pd.read_html('https://data-class-mars-facts.s3.amazonaws.com/Mars_Facts/index.html')[0]
+    
     except BaseException:
         return None
 
-    #assign columns and set index of dataframe
+    # Assign columns and set index of dataframe
     df.columns=['description', 'Mars', 'Earth']
     df.set_index('description', inplace=True)
 
